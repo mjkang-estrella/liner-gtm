@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vercel dev",
-    "check": "node --check api/search.js && node --check benchmark/search-api.js"
+    "check": "node --check api/search.js && node --check benchmark/search-api.js && node --check benchmark/app.js"
   },
   "devDependencies": {
     "vercel": "^48.6.0"
