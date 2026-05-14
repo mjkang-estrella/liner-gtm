@@ -14,6 +14,7 @@
         --color-text: oklch(0.17 0.006 255);
         --color-muted: oklch(0.47 0.009 255);
         --color-soft: oklch(0.95 0.006 255);
+        --color-input: oklch(0.91 0.007 255);
         --color-rule: oklch(0.17 0.006 255);
         --color-error: oklch(0.52 0.13 28);
         --color-warn: oklch(0.58 0.09 78);
@@ -35,6 +36,8 @@
         font-size: 13px;
         line-height: 1.45;
         -webkit-font-smoothing: antialiased;
+        height: 100vh;
+        overflow: hidden;
     }
 
     h1, h2, h3, .mono, button, summary {
@@ -66,10 +69,11 @@
     .app-container {
         display: flex;
         flex-direction: column;
-        min-height: 100vh;
+        height: 100vh;
         border-left: var(--border-style);
         border-right: var(--border-style);
         margin: 0 20px;
+        overflow: hidden;
     }
 
     .search-section {
@@ -85,18 +89,17 @@
     }
 
     .search-label {
-        padding: 14px 12px;
+        padding: 16px 12px;
         border-bottom: var(--border-style);
-        font-size: 18px;
-        line-height: 1.1;
-        background: var(--color-panel);
-        color: var(--color-text);
+        font-size: 20px;
+        line-height: 1;
+        background: var(--color-text);
+        color: var(--color-bg);
+        font-weight: 700;
     }
 
     .search-input-row {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        align-items: stretch;
+        display: block;
     }
 
     .search-input {
@@ -105,28 +108,16 @@
         padding: 22px 12px;
         font-size: 24px;
         outline: none;
-        background: transparent;
+        background: var(--color-input);
+        box-shadow: inset 0 0 0 2px var(--color-text);
     }
 
     .search-input:focus {
-        background: var(--color-soft);
-        box-shadow: inset 0 0 0 2px var(--color-text);
+        box-shadow: inset 0 0 0 3px var(--color-text);
     }
 
     .search-input::placeholder {
         color: var(--color-muted);
-    }
-
-    .max-results {
-        border: none;
-        border-left: var(--border-style);
-        background: transparent;
-        color: var(--color-text);
-        font-family: var(--font-mono);
-        font-size: 12px;
-        padding: 0 12px;
-        width: 96px;
-        text-transform: uppercase;
     }
 
     .search-button {
@@ -164,43 +155,30 @@
         text-align: center;
     }
 
-    .run-summary {
-        min-height: 32px;
-        border-bottom: var(--border-style);
-        padding: 8px 12px;
-        display: flex;
-        gap: 18px;
-        align-items: center;
-        flex-wrap: wrap;
-        font-family: var(--font-mono);
-        font-size: 10px;
-        text-transform: uppercase;
-    }
-
-    .summary-muted {
-        color: var(--color-muted);
-    }
-
     .results-area {
         background-color: var(--color-rule);
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        grid-auto-rows: minmax(0, 1fr);
         gap: 1px;
         border-bottom: var(--border-style);
         flex-grow: 1;
+        min-height: 0;
+        overflow: hidden;
     }
 
     .provider-card {
         background-color: var(--color-panel);
         display: flex;
         flex-direction: column;
-        min-height: 400px;
+        min-height: 0;
         min-width: 0;
+        overflow: hidden;
     }
 
     .card-header {
         border-bottom: var(--border-style);
-        padding: 8px 12px;
+        padding: 10px 12px;
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
@@ -208,16 +186,9 @@
     }
 
     .provider-name {
-        font-size: 16px;
+        font-size: 19px;
         font-weight: 700;
-    }
-
-    .status-line {
-        margin-top: 4px;
-        color: var(--color-muted);
-        font-family: var(--font-mono);
-        font-size: 10px;
-        text-transform: uppercase;
+        line-height: 1;
     }
 
     .status-error {
@@ -238,7 +209,7 @@
         justify-content: flex-end;
         gap: 8px;
         font-family: var(--font-mono);
-        font-size: 10px;
+        font-size: 9px;
         text-transform: uppercase;
     }
 
@@ -249,20 +220,61 @@
     .card-body {
         padding: 12px;
         flex-grow: 1;
+        min-height: 0;
         overflow-y: auto;
     }
 
     .result-snippet {
-        margin-bottom: 14px;
+        border-bottom: 1px solid var(--color-soft);
+    }
+
+    .result-snippet:last-child {
+        border-bottom: none;
+    }
+
+    .result-row {
+        min-height: 44px;
+        display: grid;
+        grid-template-columns: 20px 1fr;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 0;
+    }
+
+    .expand-button {
+        align-items: center;
+        background: transparent;
+        border: none;
+        color: var(--color-muted);
+        cursor: pointer;
+        display: flex;
+        font-family: var(--font-mono);
+        font-size: 13px;
+        height: 24px;
+        justify-content: center;
+        padding: 0;
+        width: 20px;
+        transition: transform 0.16s ease-out;
+    }
+
+    .result-snippet.is-open .expand-button {
+        transform: rotate(90deg);
+    }
+
+    .result-content {
+        display: none;
+    }
+
+    .result-snippet.is-open .result-content {
+        display: block;
     }
 
     .result-title {
         color: inherit;
         display: inline-block;
-        font-weight: 700;
-        font-size: 14px;
-        line-height: 1.25;
-        margin-bottom: 5px;
+        font-weight: 600;
+        font-size: 13.5px;
+        line-height: 1.28;
     }
 
     .result-title:hover,
@@ -274,13 +286,20 @@
         color: var(--color-muted);
         font-family: var(--font-mono);
         font-size: 10px;
-        margin-bottom: 4px;
+        margin: 0 0 4px 26px;
         overflow-wrap: anywhere;
         text-transform: uppercase;
     }
 
     .result-text {
         font-size: 12.5px;
+        margin-left: 26px;
+        padding-bottom: 12px;
+    }
+
+    .result-text a {
+        text-decoration: underline;
+        text-underline-offset: 2px;
     }
 
     .state-message {
@@ -331,40 +350,90 @@
         border-top: var(--border-style);
     }
 
-    .raw-details {
-        font-family: var(--font-mono);
-        font-size: 10px;
-    }
-
-    .raw-details summary {
+    .raw-button {
+        width: 100%;
         min-height: 44px;
         padding: 10px 12px;
+        background: transparent;
+        border: none;
+        color: var(--color-text);
         cursor: pointer;
+        font-family: var(--font-mono);
+        font-size: 10px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        list-style: none;
+        text-transform: uppercase;
     }
 
-    .raw-details summary::-webkit-details-marker {
-        display: none;
-    }
-
-    .raw-details summary::after {
+    .raw-button::after {
         content: "->";
     }
 
-    .raw-details[open] summary {
-        border-bottom: var(--border-style);
+    .raw-button:hover,
+    .raw-button:focus-visible {
         background: var(--color-soft);
     }
 
-    .raw-details[open] summary::after {
-        content: "v";
+    .json-modal[hidden] {
+        display: none;
+    }
+
+    .json-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 20;
+        display: grid;
+        place-items: center;
+        padding: 20px;
+    }
+
+    .json-modal-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.64);
+    }
+
+    .json-modal-panel {
+        position: relative;
+        z-index: 1;
+        width: min(920px, 100%);
+        max-height: min(760px, calc(100vh - 40px));
+        background: var(--color-bg);
+        border: var(--border-style);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .json-modal-header {
+        min-height: 48px;
+        border-bottom: var(--border-style);
+        padding: 10px 12px;
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: center;
+        font-family: var(--font-mono);
+        text-transform: uppercase;
+    }
+
+    .json-modal-close {
+        width: 36px;
+        height: 32px;
+        border: var(--border-style);
+        background: transparent;
+        cursor: pointer;
+        font-family: var(--font-mono);
+    }
+
+    .json-modal-close:hover,
+    .json-modal-close:focus-visible {
+        background: var(--color-text);
+        color: var(--color-bg);
     }
 
     .raw-json {
-        max-height: 260px;
+        flex: 1;
         overflow: auto;
         padding: 12px;
         white-space: pre-wrap;
@@ -393,20 +462,9 @@
             font-size: 15px;
         }
 
-        .search-input-row {
-            grid-template-columns: 1fr;
-        }
-
         .search-input {
             min-height: 88px;
             font-size: 18px;
-        }
-
-        .max-results {
-            width: 100%;
-            min-height: 44px;
-            border-left: none;
-            border-top: var(--border-style);
         }
 
         .search-button {
@@ -424,6 +482,8 @@
 
         .results-area {
             grid-template-columns: 1fr;
+            grid-auto-rows: minmax(320px, 1fr);
+            overflow-y: auto;
         }
 
         .provider-card {
@@ -443,10 +503,9 @@
 <div class="app-container">
     <section class="search-section">
         <div class="search-input-wrapper">
-            <h1 class="search-label mono">Search API comparison</h1>
+            <h1 class="search-label mono">API Result Comparison</h1>
             <div class="search-input-row">
-                <input type="text" class="search-input" id="queryInput" value="impact of augmented reality on modern architecture" placeholder="Enter query..." aria-label="Search query" autocomplete="off" autofocus>
-                <input type="number" class="max-results" id="maxResultsInput" value="5" min="1" max="10" aria-label="Max results">
+                <input type="text" class="search-input" id="queryInput" value="Search API for AI Agents" placeholder="Enter query..." aria-label="Search query" autocomplete="off" autofocus>
             </div>
         </div>
         <button class="search-button" type="button" id="searchButton">
@@ -455,13 +514,18 @@
         </button>
     </section>
 
-    <div class="run-summary" id="runSummary">
-        <span>READY</span>
-        <span class="summary-muted">CMD/CTRL + ENTER TO RUN</span>
-        <span class="summary-muted">MISSING KEYS WILL BE SKIPPED</span>
-    </div>
-
     <main class="results-area" id="resultsArea" aria-live="polite"></main>
+</div>
+
+<div class="json-modal" id="jsonModal" hidden>
+    <div class="json-modal-backdrop" data-action="close-json"></div>
+    <section class="json-modal-panel" role="dialog" aria-modal="true" aria-labelledby="jsonModalTitle">
+        <div class="json-modal-header">
+            <div id="jsonModalTitle">RAW JSON</div>
+            <button class="json-modal-close" type="button" data-action="close-json" aria-label="Close raw JSON">X</button>
+        </div>
+        <pre class="raw-json" id="jsonModalBody"></pre>
+    </section>
 </div>
 
 <script>
@@ -481,6 +545,7 @@
             status: 'idle',
             latencyMs: null,
             resultCount: 0,
+            defaultResults: null,
             requestId: null,
             nativeCost: null,
             nativeUsage: null,
@@ -493,22 +558,56 @@
     };
 
     const queryInput = document.querySelector('#queryInput');
-    const maxResultsInput = document.querySelector('#maxResultsInput');
     const searchButton = document.querySelector('#searchButton');
     const buttonStatus = document.querySelector('#buttonStatus');
     const resultsArea = document.querySelector('#resultsArea');
-    const runSummary = document.querySelector('#runSummary');
+    const jsonModal = document.querySelector('#jsonModal');
+    const jsonModalTitle = document.querySelector('#jsonModalTitle');
+    const jsonModalBody = document.querySelector('#jsonModalBody');
 
     window.addEventListener('DOMContentLoaded', () => {
         queryInput.focus();
         queryInput.setSelectionRange(queryInput.value.length, queryInput.value.length);
         render();
+        loadDefaultSnapshot();
     });
 
     searchButton.addEventListener('click', runSearch);
 
+    resultsArea.addEventListener('click', (event) => {
+        const rawButton = event.target.closest('[data-action="open-json"]');
+        if (rawButton) {
+            openJsonModal(rawButton.dataset.providerId);
+            return;
+        }
+
+        const button = event.target.closest('[data-action="toggle-result"]');
+        if (!button) return;
+
+        const result = button.closest('.result-snippet');
+        const content = result?.querySelector('.result-content');
+        if (!result || !content) return;
+
+        const isOpen = result.classList.toggle('is-open');
+        button.setAttribute('aria-expanded', String(isOpen));
+        button.setAttribute('aria-label', isOpen ? 'Collapse result' : 'Expand result');
+        content.hidden = !isOpen;
+    });
+
+    jsonModal.addEventListener('click', (event) => {
+        if (event.target.closest('[data-action="close-json"]')) {
+            closeJsonModal();
+        }
+    });
+
+    window.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !jsonModal.hidden) {
+            closeJsonModal();
+        }
+    });
+
     queryInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
+        if (event.key === 'Enter') {
             event.preventDefault();
             runSearch();
         }
@@ -516,7 +615,6 @@
 
     async function runSearch() {
         const query = queryInput.value.trim();
-        const maxResults = clampNumber(maxResultsInput.value, 1, 10, 5);
 
         if (!query || state.isSearching) return;
 
@@ -528,6 +626,7 @@
             status: 'loading',
             latencyMs: null,
             resultCount: 0,
+            defaultResults: null,
             requestId: null,
             nativeCost: null,
             nativeUsage: null,
@@ -543,7 +642,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ query, maxResults }),
+                body: JSON.stringify({ query }),
             });
             const payload = await response.json();
 
@@ -560,6 +659,7 @@
                 status: 'error',
                 latencyMs: null,
                 resultCount: 0,
+                defaultResults: null,
                 requestId: null,
                 nativeCost: null,
                 nativeUsage: null,
@@ -573,59 +673,37 @@
         }
     }
 
+    async function loadDefaultSnapshot() {
+        try {
+            const response = await fetch('/benchmark/default-results.json', { cache: 'no-store' });
+            if (!response.ok) throw new Error('Default snapshot unavailable');
+
+            const payload = await response.json();
+            state.providers = payload.providers || state.providers;
+            state.lastRun = payload;
+            render();
+        } catch (error) {
+            state.error = 'Default snapshot not found';
+            render();
+        }
+    }
+
     function render() {
         searchButton.disabled = state.isSearching;
         buttonStatus.textContent = state.isSearching ? 'RUNNING' : 'EXECUTE';
         resultsArea.innerHTML = state.providers.map(renderProviderCard).join('');
-        renderSummary();
-    }
-
-    function renderSummary() {
-        if (state.error) {
-            runSummary.innerHTML = `<span>ERROR</span><span class="summary-muted">${escapeHtml(state.error)}</span>`;
-            return;
-        }
-
-        if (state.isSearching) {
-            runSummary.innerHTML = '<span>SEARCHING</span><span class="summary-muted">CALLING PROVIDERS IN PARALLEL</span>';
-            return;
-        }
-
-        if (!state.lastRun) {
-            runSummary.innerHTML = '<span>READY</span><span class="summary-muted">CMD/CTRL + ENTER TO RUN</span><span class="summary-muted">MISSING KEYS WILL BE SKIPPED</span>';
-            return;
-        }
-
-        const okCount = state.providers.filter((provider) => provider.status === 'ok').length;
-        const skippedCount = state.providers.filter((provider) => provider.status === 'skipped').length;
-        const errorCount = state.providers.filter((provider) => provider.status === 'error').length;
-
-        runSummary.innerHTML = [
-            `<span>QUERY: ${escapeHtml(state.lastRun.query)}</span>`,
-            `<span class="summary-muted">TOTAL: ${state.lastRun.totalLatencyMs}ms</span>`,
-            `<span class="summary-muted">OK: ${okCount}</span>`,
-            `<span class="summary-muted">SKIP: ${skippedCount}</span>`,
-            `<span class="summary-muted">ERR: ${errorCount}</span>`,
-        ].join('');
     }
 
     function renderProviderCard(provider) {
-        const statusClass = provider.status === 'error'
-            ? 'status-error'
-            : provider.status === 'skipped'
-                ? 'status-skipped'
-                : '';
-
         return `
-            <article class="provider-card">
+            <article class="provider-card" data-provider-id="${escapeAttribute(provider.id)}">
                 <div class="card-header">
                     <div>
                         <div class="provider-name mono">${escapeHtml(provider.name)}</div>
-                        <div class="status-line ${statusClass}">${escapeHtml(getStatusLabel(provider))}</div>
                     </div>
                     <div class="metrics">
                         <div class="metric-item"><span class="metric-label">LAT:</span> ${formatLatency(provider.latencyMs)}</div>
-                        <div class="metric-item"><span class="metric-label">RES:</span> ${provider.resultCount ?? provider.results?.length ?? 0}</div>
+                        <div class="metric-item"><span class="metric-label">CST:</span> ${formatCost(provider.nativeCost)}</div>
                         <div class="metric-item"><span class="metric-label">SIG:</span> ${escapeHtml(getSignals(provider))}</div>
                     </div>
                 </div>
@@ -633,7 +711,7 @@
                     ${renderProviderBody(provider)}
                 </div>
                 <div class="card-footer">
-                    ${renderRawDetails(provider)}
+                    ${renderRawButton(provider)}
                 </div>
             </article>
         `;
@@ -672,9 +750,14 @@
 
         return `
             <div class="result-snippet">
-                <a href="${escapeAttribute(result.url || '#')}" class="result-title" target="_blank" rel="noreferrer">${escapeHtml(result.title || `Result ${index + 1}`)}</a>
-                ${meta ? `<div class="result-meta">${escapeHtml(meta)}</div>` : ''}
-                <p class="result-text">${escapeHtml(truncate(result.snippet || 'No snippet supplied.', 420))}</p>
+                <div class="result-row">
+                    <button class="expand-button" type="button" data-action="toggle-result" aria-expanded="false" aria-label="Expand result">&gt;</button>
+                    <a href="${escapeAttribute(result.url || '#')}" class="result-title" target="_blank" rel="noreferrer">${escapeHtml(result.title || `Result ${index + 1}`)}</a>
+                </div>
+                <div class="result-content" hidden>
+                    ${meta ? `<div class="result-meta">${escapeHtml(meta)}</div>` : ''}
+                    <p class="result-text">${renderMarkdownInline(truncate(result.snippet || 'No snippet supplied.', 1200))}</p>
+                </div>
             </div>
         `;
     }
@@ -689,14 +772,38 @@
         `).join('');
     }
 
-    function renderRawDetails(provider) {
-        const raw = provider.raw || provider.error || { status: provider.status };
+    function renderRawButton(provider) {
         return `
-            <details class="raw-details">
-                <summary>VIEW RAW JSON</summary>
-                <pre class="raw-json">${escapeHtml(JSON.stringify(raw, null, 2))}</pre>
-            </details>
+            <button class="raw-button" type="button" data-action="open-json" data-provider-id="${escapeAttribute(provider.id)}">VIEW RAW JSON</button>
         `;
+    }
+
+    function openJsonModal(providerId) {
+        const provider = state.providers.find((item) => item.id === providerId);
+        if (!provider) return;
+
+        const payload = {
+            provider: provider.name,
+            status: getStatusLabel(provider),
+            latencyMs: provider.latencyMs,
+            resultCount: provider.resultCount ?? provider.results?.length ?? 0,
+            defaultResults: provider.defaultResults,
+            requestId: provider.requestId,
+            nativeCost: provider.nativeCost,
+            nativeUsage: provider.nativeUsage,
+            error: provider.error,
+            raw: provider.raw || provider.error || { status: provider.status },
+        };
+
+        jsonModalTitle.textContent = `${provider.name} RAW JSON`;
+        jsonModalBody.textContent = JSON.stringify(payload, null, 2);
+        jsonModal.hidden = false;
+        jsonModal.querySelector('[data-action="close-json"]').focus();
+    }
+
+    function closeJsonModal() {
+        jsonModal.hidden = true;
+        jsonModalBody.textContent = '';
     }
 
     function getStatusLabel(provider) {
@@ -704,7 +811,7 @@
             case 'loading':
                 return 'Loading';
             case 'ok':
-                return provider.requestId ? `OK / ${provider.requestId}` : 'OK';
+                return 'OK';
             case 'skipped':
                 return 'Skipped';
             case 'error':
@@ -736,6 +843,12 @@
         return typeof value === 'number' ? `${value}ms` : '-';
     }
 
+    function formatCost(value) {
+        if (typeof value !== 'number') return '-';
+        if (value === 0) return '$0';
+        return `$${value.toFixed(value < 0.01 ? 3 : 2)}`;
+    }
+
     function formatScore(value) {
         return value.toFixed(value > 1 ? 1 : 3);
     }
@@ -750,10 +863,21 @@
         return `${text.slice(0, maxLength - 3)}...`;
     }
 
-    function clampNumber(value, min, max, fallback) {
-        const number = Number.parseInt(value, 10);
-        if (Number.isNaN(number)) return fallback;
-        return Math.min(Math.max(number, min), max);
+    function renderMarkdownInline(value) {
+        const text = String(value || '');
+        const parts = [];
+        let cursor = 0;
+        const linkPattern = /\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g;
+        let match;
+
+        while ((match = linkPattern.exec(text)) !== null) {
+            parts.push(escapeHtml(text.slice(cursor, match.index)));
+            parts.push(`<a href="${escapeAttribute(match[2])}" target="_blank" rel="noreferrer">${escapeHtml(match[1])}</a>`);
+            cursor = match.index + match[0].length;
+        }
+
+        parts.push(escapeHtml(text.slice(cursor)));
+        return parts.join('');
     }
 
     function escapeHtml(value) {
