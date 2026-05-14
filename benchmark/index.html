@@ -1,0 +1,471 @@
+<html lang="en" vid="0"><head vid="1">
+<meta charset="UTF-8" vid="2">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" vid="3">
+<title vid="4">API Comparator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" vid="5">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" vid="6">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet" vid="7">
+<style vid="8">
+    :root {
+        --color-bg: #FFFFFF;
+        --color-text: #000000;
+        --border-style: 1px solid #000000;
+        --font-mono: 'Space Mono', monospace;
+        --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background-color: var(--color-bg);
+        color: var(--color-text);
+        font-family: var(--font-sans);
+        font-size: 12px;
+        line-height: 1.4;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    
+    h1, h2, h3, .mono, button {
+        font-family: var(--font-mono);
+        text-transform: uppercase;
+        font-weight: 400;
+    }
+
+    input {
+        font-family: var(--font-mono);
+        font-weight: 400;
+    }
+
+    .dense-text {
+        font-size: 11px;
+        line-height: 1.3;
+    }
+
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    
+    .app-container {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        border-left: var(--border-style);
+        border-right: var(--border-style);
+        margin: 0 20px; 
+    }
+
+    .search-section {
+        display: flex;
+        border-bottom: var(--border-style);
+    }
+
+    .search-input-wrapper {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        border-right: var(--border-style);
+    }
+
+    .search-label {
+        padding: 14px 12px;
+        border-bottom: var(--border-style);
+        font-size: 18px;
+        line-height: 1.1;
+        background: #fff;
+        color: #000;
+    }
+
+    .search-input {
+        width: 100%;
+        border: none;
+        padding: 22px 12px;
+        font-size: 24px;
+        outline: none;
+        background: transparent;
+    }
+
+    .search-input:focus {
+        background: #f7f7f7;
+        box-shadow: inset 0 0 0 2px #000;
+    }
+
+    .search-input::placeholder {
+        color: #999;
+    }
+
+    .search-button {
+        width: 200px;
+        background-color: var(--color-bg);
+        color: var(--color-text);
+        border: none;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 12px;
+        transition: background-color 0.2s, color 0.2s;
+    }
+
+    .search-button:hover {
+        background-color: var(--color-text);
+        color: var(--color-bg);
+    }
+
+    .search-button-top {
+        text-align: right;
+        font-size: 10px;
+    }
+
+    .search-button-main {
+        font-size: 24px;
+        text-align: center;
+    }
+
+    
+    .results-area {
+        background-color: #000; 
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1px;
+        border-bottom: var(--border-style);
+        flex-grow: 1;
+    }
+
+    
+    .provider-card {
+        background-color: var(--color-bg);
+        display: flex;
+        flex-direction: column;
+        min-height: 400px;
+    }
+
+    .card-header {
+        border-bottom: var(--border-style);
+        padding: 8px 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .provider-name {
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .metrics {
+        text-align: right;
+    }
+
+    .metric-item {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        font-size: 10px;
+    }
+
+    .metric-label {
+        color: #666;
+    }
+
+    .card-body {
+        padding: 12px;
+        flex-grow: 1;
+        overflow-y: auto;
+    }
+
+    .result-snippet {
+        margin-bottom: 12px;
+    }
+
+    .result-url {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        color: #666;
+        margin-bottom: 4px;
+        display: block;
+        word-break: break-all;
+    }
+
+    .result-title {
+        font-weight: bold;
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .card-footer {
+        border-top: var(--border-style);
+        display: flex;
+    }
+
+    .action-link {
+        flex: 1;
+        padding: 8px 12px;
+        font-family: var(--font-mono);
+        font-size: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background 0.2s, color 0.2s;
+    }
+
+    .action-link:hover {
+        background: #000;
+        color: #fff;
+    }
+    
+    .action-link.secondary {
+        border-left: var(--border-style);
+        flex: 0 0 auto;
+    }
+
+    
+    .empty-cell {
+        background-color: var(--color-bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #999;
+        font-family: var(--font-mono);
+        font-size: 10px;
+        text-align: center;
+        padding: 20px;
+        background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, #f4f4f4 10px, #f4f4f4 20px);
+    }
+
+    
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #fff;
+        border-left: 1px solid #000;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #000;
+    }
+</style>
+</head>
+<body vid="9">
+
+<div class="app-container" vid="10">
+    <section class="search-section" vid="25">
+        <div class="search-input-wrapper" vid="26">
+            <h1 class="search-label mono" vid="27">Search API comparision</h1>
+            <input type="text" class="search-input" value="impact of augmented reality on modern architecture" placeholder="Enter query..." aria-label="Search query" autocomplete="off" vid="28">
+        </div>
+        <button class="search-button" vid="29">
+            <div class="search-button-top mono" vid="30">EXECUTE</div>
+            <div class="search-button-main mono" vid="31">SEARCH<br vid="32">-&gt;</div>
+        </button>
+    </section>
+
+    
+    <main class="results-area" vid="33">
+        
+        
+        <div class="provider-card" vid="34">
+            <div class="card-header" vid="35">
+                <div class="provider-name mono" vid="36">SERPER.DEV</div>
+                <div class="metrics mono" vid="37">
+                    <div class="metric-item" vid="38"><span class="metric-label" vid="39">LAT:</span> 420ms</div>
+                    <div class="metric-item" vid="40"><span class="metric-label" vid="41">CST:</span> $1.00</div>
+                </div>
+            </div>
+            <div class="card-body dense-text" vid="42">
+                <div class="result-snippet" vid="43">
+                    <a href="#" class="result-url" vid="44">https://www.archdaily.com/category/augmented-reality</a>
+                    <div class="result-title" vid="45">Augmented Reality in Architecture | ArchDaily</div>
+                    <p vid="46">Augmented Reality (AR) is reshaping how architects design and present their concepts. By overlaying digital models onto the physical world, it bridges the gap between imagination and reality...</p>
+                </div>
+                <div class="result-snippet" vid="47">
+                    <a href="#" class="result-url" vid="48">https://www.dezeen.com/tag/augmented-reality/</a>
+                    <div class="result-title" vid="49">Augmented reality architecture and design | Dezeen</div>
+                    <p vid="50">The latest news and projects involving augmented reality (AR) in architecture, design and technology. From virtual installations to construction aids.</p>
+                </div>
+                <div class="result-snippet" vid="51">
+                    <a href="#" class="result-url" vid="52">https://parametric-architecture.com/ar-in-architecture/</a>
+                    <div class="result-title" vid="53">How Augmented Reality is Changing Architecture</div>
+                    <p vid="54">It allows clients to walk through a proposed building before foundations are even laid, fundamentally altering the feedback loop during the design phase.</p>
+                </div>
+            </div>
+            <div class="card-footer" vid="55">
+                <a href="#" class="action-link" vid="56">VIEW RAW JSON <span vid="57">-&gt;</span></a>
+            </div>
+        </div>
+
+        
+        <div class="provider-card" vid="58">
+            <div class="card-header" vid="59">
+                <div class="provider-name mono" vid="60">BING WEB</div>
+                <div class="metrics mono" vid="61">
+                    <div class="metric-item" vid="62"><span class="metric-label" vid="63">LAT:</span> 315ms</div>
+                    <div class="metric-item" vid="64"><span class="metric-label" vid="65">CST:</span> $3.00</div>
+                </div>
+            </div>
+            <div class="card-body dense-text" vid="66">
+                <div class="result-snippet" vid="67">
+                    <a href="#" class="result-url" vid="68">https://www.forbes.com/sites/bernardmarr/ar-architecture/</a>
+                    <div class="result-title" vid="69">The Future Of Construction: How AR Is Transforming...</div>
+                    <p vid="70">One of the most significant impacts of AR is in error reduction on site. Workers can see exactly where a pipe should go through AR glasses, matching the BIM model to the physical space.</p>
+                </div>
+                <div class="result-snippet" vid="71">
+                    <a href="#" class="result-url" vid="72">https://www.archdaily.com/category/augmented-reality</a>
+                    <div class="result-title" vid="73">Augmented Reality Architecture Projects</div>
+                    <p vid="74">Discover how modern architects are utilizing AR tools not just for presentation, but as an active tool during the drafting and conceptualization phases.</p>
+                </div>
+            </div>
+            <div class="card-footer" vid="75">
+                <a href="#" class="action-link" vid="76">VIEW RAW JSON <span vid="77">-&gt;</span></a>
+            </div>
+        </div>
+
+        
+        <div class="provider-card" vid="78">
+            <div class="card-header" vid="79">
+                <div class="provider-name mono" vid="80">TAVILY</div>
+                <div class="metrics mono" vid="81">
+                    <div class="metric-item" vid="82"><span class="metric-label" vid="83">LAT:</span> 850ms</div>
+                    <div class="metric-item" vid="84"><span class="metric-label" vid="85">CST:</span> $5.00</div>
+                </div>
+            </div>
+            <div class="card-body dense-text" vid="86">
+                <div class="result-snippet" vid="87">
+                    <div class="result-title" style="font-family: var(--font-mono); font-size: 11px;" vid="88">// AI SYNTHESIZED ANSWER</div>
+                    <p vid="89">Augmented Reality (AR) impacts modern architecture primarily in three areas: 1) <strong vid="90">Visualization</strong>: Allowing clients to experience 1:1 scale models on-site before construction. 2) <strong vid="91">Construction accuracy</strong>: Overlaying BIM (Building Information Modeling) data onto active construction sites to guide workers and detect clashes early. 3) <strong vid="92">Design process</strong>: Enabling architects to manipulate forms in 3D space interactively. The integration bridges the traditional gap between 2D plans and 3D realities, reducing rework costs by an estimated 15-20% in complex projects.</p>
+                </div>
+            </div>
+            <div class="card-footer" vid="93">
+                <a href="#" class="action-link" vid="94">VIEW RAW JSON <span vid="95">-&gt;</span></a>
+            </div>
+        </div>
+
+        
+        <div class="provider-card" vid="97">
+            <div class="card-header" vid="98">
+                <div class="provider-name mono" vid="99">BRAVE SEARCH</div>
+                <div class="metrics mono" vid="100">
+                    <div class="metric-item" vid="101"><span class="metric-label" vid="102">LAT:</span> 280ms</div>
+                    <div class="metric-item" vid="103"><span class="metric-label" vid="104">CST:</span> $3.00</div>
+                </div>
+            </div>
+            <div class="card-body dense-text" vid="105">
+                <div class="result-snippet" vid="106">
+                    <a href="#" class="result-url" vid="107">https://www.vogue.com/article/digital-architecture</a>
+                    <div class="result-title" vid="108">Beyond the physical: AR and digital architecture</div>
+                    <p vid="109">As our lives move increasingly online, the definition of architecture expands. AR allows for the creation of structures that exist only in the digital realm but interact with the physical one.</p>
+                </div>
+                <div class="result-snippet" vid="110">
+                    <a href="#" class="result-url" vid="111">https://parametric-architecture.com/ar-in-architecture/</a>
+                    <div class="result-title" vid="112">How Augmented Reality is Changing Architecture</div>
+                    <p vid="113">Review of the top 5 software tools architects are using to integrate AR into their daily workflows.</p>
+                </div>
+            </div>
+            <div class="card-footer" vid="114">
+                <a href="#" class="action-link" vid="115">VIEW RAW JSON <span vid="116">-&gt;</span></a>
+            </div>
+        </div>
+
+        
+        <div class="provider-card" vid="117">
+            <div class="card-header" vid="118">
+                <div class="provider-name mono" vid="119">DUCKDUCKGO</div>
+                <div class="metrics mono" vid="120">
+                    <div class="metric-item" vid="121"><span class="metric-label" vid="122">LAT:</span> 350ms</div>
+                    <div class="metric-item" vid="123"><span class="metric-label" vid="124">CST:</span> $0.00</div>
+                </div>
+            </div>
+            <div class="card-body dense-text" vid="125">
+                <div class="result-snippet" vid="126">
+                    <a href="#" class="result-url" vid="127">https://en.wikipedia.org/wiki/Augmented_reality</a>
+                    <div class="result-title" vid="128">Augmented reality - Wikipedia</div>
+                    <p vid="129">In architecture, AR can be used to visualize building projects. Computer-generated images of a structure can be superimposed into a real-life local view of a property before the physical building is constructed there...</p>
+                </div>
+                <div class="result-snippet" vid="130">
+                    <a href="#" class="result-url" vid="131">https://www.archdaily.com/category/augmented-reality</a>
+                    <div class="result-title" vid="132">Augmented Reality | ArchDaily</div>
+                    <p vid="133">Latest articles on Augmented Reality. Discover the newest projects and articles.</p>
+                </div>
+            </div>
+            <div class="card-footer" vid="134">
+                <a href="#" class="action-link" vid="135">VIEW RAW JSON <span vid="136">-&gt;</span></a>
+            </div>
+        </div>
+
+        
+        <div class="provider-card" vid="137">
+            <div class="card-header" vid="138">
+                <div class="provider-name mono" vid="139">EXA.AI</div>
+                <div class="metrics mono" vid="140">
+                    <div class="metric-item" vid="141"><span class="metric-label" vid="142">LAT:</span> 610ms</div>
+                    <div class="metric-item" vid="143"><span class="metric-label" vid="144">CST:</span> $4.00</div>
+                </div>
+            </div>
+            <div class="card-body dense-text" vid="145">
+                <div class="result-snippet" vid="146">
+                    <a href="#" class="result-url" vid="147">https://scholar.google.com/papers/ar_architecture_2023.pdf</a>
+                    <div class="result-title" vid="148">Evaluating the efficacy of AR in architectural workflows</div>
+                    <p vid="149">Academic paper. Abstract: This study quantifies the impact of spatial computing and augmented reality on collaborative design phases, noting a 30% reduction in spatial comprehension errors among non-technical stakeholders.</p>
+                </div>
+                <div class="result-snippet" vid="150">
+                    <a href="#" class="result-url" vid="151">https://news.ycombinator.com/item?id=349281</a>
+                    <div class="result-title" vid="152">Ask HN: Are any architects actually using AR?</div>
+                    <p vid="153">Discussion thread. "We use it for clash detection on site using iPads. It's okay, but positioning drift is still a major issue for mm-level accuracy required in structural elements."</p>
+                </div>
+            </div>
+            <div class="card-footer" vid="154">
+                <a href="#" class="action-link" vid="155">VIEW RAW JSON <span vid="156">-&gt;</span></a>
+            </div>
+        </div>
+
+        
+        <div class="provider-card" vid="157">
+            <div class="card-header" vid="158">
+                <div class="provider-name mono" vid="159">GOOGLE API</div>
+                <div class="metrics mono" vid="160">
+                    <div class="metric-item" vid="161"><span class="metric-label" vid="162">LAT:</span> 210ms</div>
+                    <div class="metric-item" vid="163"><span class="metric-label" vid="164">CST:</span> $5.00</div>
+                </div>
+            </div>
+            <div class="card-body dense-text" vid="165">
+                <div class="result-snippet" vid="166">
+                    <a href="#" class="result-url" vid="167">https://www.autodesk.com/solutions/augmented-reality-architecture</a>
+                    <div class="result-title" vid="168">AR in Architecture | Autodesk</div>
+                    <p vid="169">Learn how Autodesk software enables immersive AR experiences for architectural design and construction management.</p>
+                </div>
+                <div class="result-snippet" vid="170">
+                    <a href="#" class="result-url" vid="171">https://www.dezeen.com/tag/augmented-reality/</a>
+                    <div class="result-title" vid="172">Augmented reality | Dezeen</div>
+                    <p vid="173">Stories about augmented reality (AR) in architecture and design, including apps that overlay digital information onto the real world.</p>
+                </div>
+                <div class="result-snippet" vid="174">
+                    <a href="#" class="result-url" vid="175">https://www.youtube.com/watch?v=ar-arch-demo</a>
+                    <div class="result-title" vid="176">Video: Real-time AR Architectural Visualization</div>
+                    <p vid="177">A demonstration of walking through a virtual living room overlaying a physical empty lot.</p>
+                </div>
+            </div>
+            <div class="card-footer" vid="178">
+                <a href="#" class="action-link" vid="179">VIEW RAW JSON <span vid="180">-&gt;</span></a>
+            </div>
+        </div>
+
+        
+        <div class="empty-cell" vid="181">
+            AWAITING ADDITIONAL<br vid="182">PROVIDER INTEGRATION
+        </div>
+
+    </main>
+</div>
+
+
+</body></html>
