@@ -1,17 +1,25 @@
-<html lang="en" vid="0"><head vid="1">
-<meta charset="UTF-8" vid="2">
-<meta name="viewport" content="width=device-width, initial-scale=1.0" vid="3">
-<title vid="4">API Comparator</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" vid="5">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" vid="6">
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet" vid="7">
-<style vid="8">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Comparator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
     :root {
-        --color-bg: #FFFFFF;
-        --color-text: #000000;
-        --border-style: 1px solid #000000;
+        --color-bg: oklch(0.985 0.006 255);
+        --color-panel: oklch(0.998 0.004 255);
+        --color-text: oklch(0.17 0.006 255);
+        --color-muted: oklch(0.47 0.009 255);
+        --color-soft: oklch(0.95 0.006 255);
+        --color-rule: oklch(0.17 0.006 255);
+        --color-error: oklch(0.52 0.13 28);
+        --color-warn: oklch(0.58 0.09 78);
+        --border-style: 1px solid var(--color-rule);
         --font-mono: 'Space Mono', monospace;
-        --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     }
 
     * {
@@ -24,13 +32,12 @@
         background-color: var(--color-bg);
         color: var(--color-text);
         font-family: var(--font-sans);
-        font-size: 12px;
-        line-height: 1.4;
+        font-size: 13px;
+        line-height: 1.45;
         -webkit-font-smoothing: antialiased;
     }
 
-    
-    h1, h2, h3, .mono, button {
+    h1, h2, h3, .mono, button, summary {
         font-family: var(--font-mono);
         text-transform: uppercase;
         font-weight: 400;
@@ -41,28 +48,28 @@
         font-weight: 400;
     }
 
-    .dense-text {
-        font-size: 11px;
-        line-height: 1.3;
-    }
-
     a {
         color: inherit;
         text-decoration: none;
     }
 
-    a:hover {
+    a:hover,
+    a:focus-visible {
         text-decoration: underline;
     }
 
-    
+    :focus-visible {
+        outline: 2px solid var(--color-text);
+        outline-offset: -2px;
+    }
+
     .app-container {
         display: flex;
         flex-direction: column;
         min-height: 100vh;
         border-left: var(--border-style);
         border-right: var(--border-style);
-        margin: 0 20px; 
+        margin: 0 20px;
     }
 
     .search-section {
@@ -82,8 +89,14 @@
         border-bottom: var(--border-style);
         font-size: 18px;
         line-height: 1.1;
-        background: #fff;
-        color: #000;
+        background: var(--color-panel);
+        color: var(--color-text);
+    }
+
+    .search-input-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: stretch;
     }
 
     .search-input {
@@ -96,12 +109,24 @@
     }
 
     .search-input:focus {
-        background: #f7f7f7;
-        box-shadow: inset 0 0 0 2px #000;
+        background: var(--color-soft);
+        box-shadow: inset 0 0 0 2px var(--color-text);
     }
 
     .search-input::placeholder {
-        color: #999;
+        color: var(--color-muted);
+    }
+
+    .max-results {
+        border: none;
+        border-left: var(--border-style);
+        background: transparent;
+        color: var(--color-text);
+        font-family: var(--font-mono);
+        font-size: 12px;
+        padding: 0 12px;
+        width: 96px;
+        text-transform: uppercase;
     }
 
     .search-button {
@@ -117,9 +142,16 @@
         transition: background-color 0.2s, color 0.2s;
     }
 
-    .search-button:hover {
+    .search-button:hover,
+    .search-button:focus-visible {
         background-color: var(--color-text);
         color: var(--color-bg);
+    }
+
+    .search-button:disabled {
+        cursor: wait;
+        color: var(--color-muted);
+        background: var(--color-soft);
     }
 
     .search-button-top {
@@ -132,22 +164,38 @@
         text-align: center;
     }
 
-    
+    .run-summary {
+        min-height: 32px;
+        border-bottom: var(--border-style);
+        padding: 8px 12px;
+        display: flex;
+        gap: 18px;
+        align-items: center;
+        flex-wrap: wrap;
+        font-family: var(--font-mono);
+        font-size: 10px;
+        text-transform: uppercase;
+    }
+
+    .summary-muted {
+        color: var(--color-muted);
+    }
+
     .results-area {
-        background-color: #000; 
+        background-color: var(--color-rule);
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         gap: 1px;
         border-bottom: var(--border-style);
         flex-grow: 1;
     }
 
-    
     .provider-card {
-        background-color: var(--color-bg);
+        background-color: var(--color-panel);
         display: flex;
         flex-direction: column;
         min-height: 400px;
+        min-width: 0;
     }
 
     .card-header {
@@ -156,6 +204,7 @@
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
+        gap: 12px;
     }
 
     .provider-name {
@@ -163,19 +212,38 @@
         font-weight: 700;
     }
 
+    .status-line {
+        margin-top: 4px;
+        color: var(--color-muted);
+        font-family: var(--font-mono);
+        font-size: 10px;
+        text-transform: uppercase;
+    }
+
+    .status-error {
+        color: var(--color-error);
+    }
+
+    .status-skipped {
+        color: var(--color-warn);
+    }
+
     .metrics {
         text-align: right;
+        flex: 0 0 auto;
     }
 
     .metric-item {
         display: flex;
         justify-content: flex-end;
         gap: 8px;
+        font-family: var(--font-mono);
         font-size: 10px;
+        text-transform: uppercase;
     }
 
     .metric-label {
-        color: #666;
+        color: var(--color-muted);
     }
 
     .card-body {
@@ -185,287 +253,521 @@
     }
 
     .result-snippet {
-        margin-bottom: 12px;
-    }
-
-    .result-url {
-        font-family: var(--font-mono);
-        font-size: 10px;
-        color: #666;
-        margin-bottom: 4px;
-        display: block;
-        word-break: break-all;
+        margin-bottom: 14px;
     }
 
     .result-title {
-        font-weight: bold;
+        color: inherit;
+        display: inline-block;
+        font-weight: 700;
         font-size: 14px;
+        line-height: 1.25;
+        margin-bottom: 5px;
+    }
+
+    .result-title:hover,
+    .result-title:focus-visible {
+        text-decoration: underline;
+    }
+
+    .result-meta {
+        color: var(--color-muted);
+        font-family: var(--font-mono);
+        font-size: 10px;
         margin-bottom: 4px;
+        overflow-wrap: anywhere;
+        text-transform: uppercase;
+    }
+
+    .result-text {
+        font-size: 12.5px;
+    }
+
+    .state-message {
+        color: var(--color-muted);
+        font-family: var(--font-mono);
+        font-size: 11px;
+        line-height: 1.45;
+        text-transform: uppercase;
+    }
+
+    .state-message strong {
+        color: var(--color-text);
+        font-weight: 700;
+    }
+
+    .skeleton-line {
+        height: 12px;
+        background: var(--color-soft);
+        margin-bottom: 10px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .skeleton-line::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        transform: translateX(-100%);
+        background: linear-gradient(90deg, transparent, oklch(0.985 0.004 255), transparent);
+        animation: shimmer 1.1s infinite;
+    }
+
+    .skeleton-line.short {
+        width: 55%;
+    }
+
+    .skeleton-line.medium {
+        width: 78%;
+    }
+
+    @keyframes shimmer {
+        to {
+            transform: translateX(100%);
+        }
     }
 
     .card-footer {
         border-top: var(--border-style);
-        display: flex;
     }
 
-    .action-link {
-        flex: 1;
-        padding: 8px 12px;
+    .raw-details {
         font-family: var(--font-mono);
         font-size: 10px;
+    }
+
+    .raw-details summary {
+        min-height: 44px;
+        padding: 10px 12px;
+        cursor: pointer;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        transition: background 0.2s, color 0.2s;
+        list-style: none;
     }
 
-    .action-link:hover {
-        background: #000;
-        color: #fff;
-    }
-    
-    .action-link.secondary {
-        border-left: var(--border-style);
-        flex: 0 0 auto;
+    .raw-details summary::-webkit-details-marker {
+        display: none;
     }
 
-    
-    .empty-cell {
-        background-color: var(--color-bg);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #999;
-        font-family: var(--font-mono);
+    .raw-details summary::after {
+        content: "->";
+    }
+
+    .raw-details[open] summary {
+        border-bottom: var(--border-style);
+        background: var(--color-soft);
+    }
+
+    .raw-details[open] summary::after {
+        content: "v";
+    }
+
+    .raw-json {
+        max-height: 260px;
+        overflow: auto;
+        padding: 12px;
+        white-space: pre-wrap;
+        word-break: break-word;
+        text-transform: none;
         font-size: 10px;
-        text-align: center;
-        padding: 20px;
-        background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, #f4f4f4 10px, #f4f4f4 20px);
+        line-height: 1.45;
     }
 
-    
-    ::-webkit-scrollbar {
-        width: 8px;
+    @media (max-width: 720px) {
+        .app-container {
+            margin: 0;
+            border-left: none;
+            border-right: none;
+        }
+
+        .search-section {
+            flex-direction: column;
+        }
+
+        .search-input-wrapper {
+            border-right: none;
+        }
+
+        .search-label {
+            font-size: 15px;
+        }
+
+        .search-input-row {
+            grid-template-columns: 1fr;
+        }
+
+        .search-input {
+            min-height: 88px;
+            font-size: 18px;
+        }
+
+        .max-results {
+            width: 100%;
+            min-height: 44px;
+            border-left: none;
+            border-top: var(--border-style);
+        }
+
+        .search-button {
+            width: 100%;
+            min-height: 76px;
+            border-top: var(--border-style);
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .search-button-top,
+        .search-button-main {
+            text-align: left;
+        }
+
+        .results-area {
+            grid-template-columns: 1fr;
+        }
+
+        .provider-card {
+            min-height: 320px;
+        }
     }
-    ::-webkit-scrollbar-track {
-        background: #fff;
-        border-left: 1px solid #000;
-    }
-    ::-webkit-scrollbar-thumb {
-        background: #000;
+
+    @media (min-width: 721px) and (max-width: 1180px) {
+        .results-area {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
     }
 </style>
 </head>
-<body vid="9">
+<body>
 
-<div class="app-container" vid="10">
-    <section class="search-section" vid="25">
-        <div class="search-input-wrapper" vid="26">
-            <h1 class="search-label mono" vid="27">Search API comparision</h1>
-            <input type="text" class="search-input" value="impact of augmented reality on modern architecture" placeholder="Enter query..." aria-label="Search query" autocomplete="off" vid="28">
+<div class="app-container">
+    <section class="search-section">
+        <div class="search-input-wrapper">
+            <h1 class="search-label mono">Search API comparison</h1>
+            <div class="search-input-row">
+                <input type="text" class="search-input" id="queryInput" value="impact of augmented reality on modern architecture" placeholder="Enter query..." aria-label="Search query" autocomplete="off" autofocus>
+                <input type="number" class="max-results" id="maxResultsInput" value="5" min="1" max="10" aria-label="Max results">
+            </div>
         </div>
-        <button class="search-button" vid="29">
-            <div class="search-button-top mono" vid="30">EXECUTE</div>
-            <div class="search-button-main mono" vid="31">SEARCH<br vid="32">-&gt;</div>
+        <button class="search-button" type="button" id="searchButton">
+            <div class="search-button-top mono" id="buttonStatus">EXECUTE</div>
+            <div class="search-button-main mono">SEARCH<br>-&gt;</div>
         </button>
     </section>
 
-    
-    <main class="results-area" vid="33">
-        
-        
-        <div class="provider-card" vid="34">
-            <div class="card-header" vid="35">
-                <div class="provider-name mono" vid="36">SERPER.DEV</div>
-                <div class="metrics mono" vid="37">
-                    <div class="metric-item" vid="38"><span class="metric-label" vid="39">LAT:</span> 420ms</div>
-                    <div class="metric-item" vid="40"><span class="metric-label" vid="41">CST:</span> $1.00</div>
-                </div>
-            </div>
-            <div class="card-body dense-text" vid="42">
-                <div class="result-snippet" vid="43">
-                    <a href="#" class="result-url" vid="44">https://www.archdaily.com/category/augmented-reality</a>
-                    <div class="result-title" vid="45">Augmented Reality in Architecture | ArchDaily</div>
-                    <p vid="46">Augmented Reality (AR) is reshaping how architects design and present their concepts. By overlaying digital models onto the physical world, it bridges the gap between imagination and reality...</p>
-                </div>
-                <div class="result-snippet" vid="47">
-                    <a href="#" class="result-url" vid="48">https://www.dezeen.com/tag/augmented-reality/</a>
-                    <div class="result-title" vid="49">Augmented reality architecture and design | Dezeen</div>
-                    <p vid="50">The latest news and projects involving augmented reality (AR) in architecture, design and technology. From virtual installations to construction aids.</p>
-                </div>
-                <div class="result-snippet" vid="51">
-                    <a href="#" class="result-url" vid="52">https://parametric-architecture.com/ar-in-architecture/</a>
-                    <div class="result-title" vid="53">How Augmented Reality is Changing Architecture</div>
-                    <p vid="54">It allows clients to walk through a proposed building before foundations are even laid, fundamentally altering the feedback loop during the design phase.</p>
-                </div>
-            </div>
-            <div class="card-footer" vid="55">
-                <a href="#" class="action-link" vid="56">VIEW RAW JSON <span vid="57">-&gt;</span></a>
-            </div>
-        </div>
+    <div class="run-summary" id="runSummary">
+        <span>READY</span>
+        <span class="summary-muted">CMD/CTRL + ENTER TO RUN</span>
+        <span class="summary-muted">MISSING KEYS WILL BE SKIPPED</span>
+    </div>
 
-        
-        <div class="provider-card" vid="58">
-            <div class="card-header" vid="59">
-                <div class="provider-name mono" vid="60">BING WEB</div>
-                <div class="metrics mono" vid="61">
-                    <div class="metric-item" vid="62"><span class="metric-label" vid="63">LAT:</span> 315ms</div>
-                    <div class="metric-item" vid="64"><span class="metric-label" vid="65">CST:</span> $3.00</div>
-                </div>
-            </div>
-            <div class="card-body dense-text" vid="66">
-                <div class="result-snippet" vid="67">
-                    <a href="#" class="result-url" vid="68">https://www.forbes.com/sites/bernardmarr/ar-architecture/</a>
-                    <div class="result-title" vid="69">The Future Of Construction: How AR Is Transforming...</div>
-                    <p vid="70">One of the most significant impacts of AR is in error reduction on site. Workers can see exactly where a pipe should go through AR glasses, matching the BIM model to the physical space.</p>
-                </div>
-                <div class="result-snippet" vid="71">
-                    <a href="#" class="result-url" vid="72">https://www.archdaily.com/category/augmented-reality</a>
-                    <div class="result-title" vid="73">Augmented Reality Architecture Projects</div>
-                    <p vid="74">Discover how modern architects are utilizing AR tools not just for presentation, but as an active tool during the drafting and conceptualization phases.</p>
-                </div>
-            </div>
-            <div class="card-footer" vid="75">
-                <a href="#" class="action-link" vid="76">VIEW RAW JSON <span vid="77">-&gt;</span></a>
-            </div>
-        </div>
-
-        
-        <div class="provider-card" vid="78">
-            <div class="card-header" vid="79">
-                <div class="provider-name mono" vid="80">TAVILY</div>
-                <div class="metrics mono" vid="81">
-                    <div class="metric-item" vid="82"><span class="metric-label" vid="83">LAT:</span> 850ms</div>
-                    <div class="metric-item" vid="84"><span class="metric-label" vid="85">CST:</span> $5.00</div>
-                </div>
-            </div>
-            <div class="card-body dense-text" vid="86">
-                <div class="result-snippet" vid="87">
-                    <div class="result-title" style="font-family: var(--font-mono); font-size: 11px;" vid="88">// AI SYNTHESIZED ANSWER</div>
-                    <p vid="89">Augmented Reality (AR) impacts modern architecture primarily in three areas: 1) <strong vid="90">Visualization</strong>: Allowing clients to experience 1:1 scale models on-site before construction. 2) <strong vid="91">Construction accuracy</strong>: Overlaying BIM (Building Information Modeling) data onto active construction sites to guide workers and detect clashes early. 3) <strong vid="92">Design process</strong>: Enabling architects to manipulate forms in 3D space interactively. The integration bridges the traditional gap between 2D plans and 3D realities, reducing rework costs by an estimated 15-20% in complex projects.</p>
-                </div>
-            </div>
-            <div class="card-footer" vid="93">
-                <a href="#" class="action-link" vid="94">VIEW RAW JSON <span vid="95">-&gt;</span></a>
-            </div>
-        </div>
-
-        
-        <div class="provider-card" vid="97">
-            <div class="card-header" vid="98">
-                <div class="provider-name mono" vid="99">BRAVE SEARCH</div>
-                <div class="metrics mono" vid="100">
-                    <div class="metric-item" vid="101"><span class="metric-label" vid="102">LAT:</span> 280ms</div>
-                    <div class="metric-item" vid="103"><span class="metric-label" vid="104">CST:</span> $3.00</div>
-                </div>
-            </div>
-            <div class="card-body dense-text" vid="105">
-                <div class="result-snippet" vid="106">
-                    <a href="#" class="result-url" vid="107">https://www.vogue.com/article/digital-architecture</a>
-                    <div class="result-title" vid="108">Beyond the physical: AR and digital architecture</div>
-                    <p vid="109">As our lives move increasingly online, the definition of architecture expands. AR allows for the creation of structures that exist only in the digital realm but interact with the physical one.</p>
-                </div>
-                <div class="result-snippet" vid="110">
-                    <a href="#" class="result-url" vid="111">https://parametric-architecture.com/ar-in-architecture/</a>
-                    <div class="result-title" vid="112">How Augmented Reality is Changing Architecture</div>
-                    <p vid="113">Review of the top 5 software tools architects are using to integrate AR into their daily workflows.</p>
-                </div>
-            </div>
-            <div class="card-footer" vid="114">
-                <a href="#" class="action-link" vid="115">VIEW RAW JSON <span vid="116">-&gt;</span></a>
-            </div>
-        </div>
-
-        
-        <div class="provider-card" vid="117">
-            <div class="card-header" vid="118">
-                <div class="provider-name mono" vid="119">DUCKDUCKGO</div>
-                <div class="metrics mono" vid="120">
-                    <div class="metric-item" vid="121"><span class="metric-label" vid="122">LAT:</span> 350ms</div>
-                    <div class="metric-item" vid="123"><span class="metric-label" vid="124">CST:</span> $0.00</div>
-                </div>
-            </div>
-            <div class="card-body dense-text" vid="125">
-                <div class="result-snippet" vid="126">
-                    <a href="#" class="result-url" vid="127">https://en.wikipedia.org/wiki/Augmented_reality</a>
-                    <div class="result-title" vid="128">Augmented reality - Wikipedia</div>
-                    <p vid="129">In architecture, AR can be used to visualize building projects. Computer-generated images of a structure can be superimposed into a real-life local view of a property before the physical building is constructed there...</p>
-                </div>
-                <div class="result-snippet" vid="130">
-                    <a href="#" class="result-url" vid="131">https://www.archdaily.com/category/augmented-reality</a>
-                    <div class="result-title" vid="132">Augmented Reality | ArchDaily</div>
-                    <p vid="133">Latest articles on Augmented Reality. Discover the newest projects and articles.</p>
-                </div>
-            </div>
-            <div class="card-footer" vid="134">
-                <a href="#" class="action-link" vid="135">VIEW RAW JSON <span vid="136">-&gt;</span></a>
-            </div>
-        </div>
-
-        
-        <div class="provider-card" vid="137">
-            <div class="card-header" vid="138">
-                <div class="provider-name mono" vid="139">EXA.AI</div>
-                <div class="metrics mono" vid="140">
-                    <div class="metric-item" vid="141"><span class="metric-label" vid="142">LAT:</span> 610ms</div>
-                    <div class="metric-item" vid="143"><span class="metric-label" vid="144">CST:</span> $4.00</div>
-                </div>
-            </div>
-            <div class="card-body dense-text" vid="145">
-                <div class="result-snippet" vid="146">
-                    <a href="#" class="result-url" vid="147">https://scholar.google.com/papers/ar_architecture_2023.pdf</a>
-                    <div class="result-title" vid="148">Evaluating the efficacy of AR in architectural workflows</div>
-                    <p vid="149">Academic paper. Abstract: This study quantifies the impact of spatial computing and augmented reality on collaborative design phases, noting a 30% reduction in spatial comprehension errors among non-technical stakeholders.</p>
-                </div>
-                <div class="result-snippet" vid="150">
-                    <a href="#" class="result-url" vid="151">https://news.ycombinator.com/item?id=349281</a>
-                    <div class="result-title" vid="152">Ask HN: Are any architects actually using AR?</div>
-                    <p vid="153">Discussion thread. "We use it for clash detection on site using iPads. It's okay, but positioning drift is still a major issue for mm-level accuracy required in structural elements."</p>
-                </div>
-            </div>
-            <div class="card-footer" vid="154">
-                <a href="#" class="action-link" vid="155">VIEW RAW JSON <span vid="156">-&gt;</span></a>
-            </div>
-        </div>
-
-        
-        <div class="provider-card" vid="157">
-            <div class="card-header" vid="158">
-                <div class="provider-name mono" vid="159">GOOGLE API</div>
-                <div class="metrics mono" vid="160">
-                    <div class="metric-item" vid="161"><span class="metric-label" vid="162">LAT:</span> 210ms</div>
-                    <div class="metric-item" vid="163"><span class="metric-label" vid="164">CST:</span> $5.00</div>
-                </div>
-            </div>
-            <div class="card-body dense-text" vid="165">
-                <div class="result-snippet" vid="166">
-                    <a href="#" class="result-url" vid="167">https://www.autodesk.com/solutions/augmented-reality-architecture</a>
-                    <div class="result-title" vid="168">AR in Architecture | Autodesk</div>
-                    <p vid="169">Learn how Autodesk software enables immersive AR experiences for architectural design and construction management.</p>
-                </div>
-                <div class="result-snippet" vid="170">
-                    <a href="#" class="result-url" vid="171">https://www.dezeen.com/tag/augmented-reality/</a>
-                    <div class="result-title" vid="172">Augmented reality | Dezeen</div>
-                    <p vid="173">Stories about augmented reality (AR) in architecture and design, including apps that overlay digital information onto the real world.</p>
-                </div>
-                <div class="result-snippet" vid="174">
-                    <a href="#" class="result-url" vid="175">https://www.youtube.com/watch?v=ar-arch-demo</a>
-                    <div class="result-title" vid="176">Video: Real-time AR Architectural Visualization</div>
-                    <p vid="177">A demonstration of walking through a virtual living room overlaying a physical empty lot.</p>
-                </div>
-            </div>
-            <div class="card-footer" vid="178">
-                <a href="#" class="action-link" vid="179">VIEW RAW JSON <span vid="180">-&gt;</span></a>
-            </div>
-        </div>
-
-        
-        <div class="empty-cell" vid="181">
-            AWAITING ADDITIONAL<br vid="182">PROVIDER INTEGRATION
-        </div>
-
-    </main>
+    <main class="results-area" id="resultsArea" aria-live="polite"></main>
 </div>
 
+<script>
+    const providers = [
+        { id: 'liner', name: 'LINER' },
+        { id: 'exa', name: 'EXA' },
+        { id: 'perplexity', name: 'PERPLEXITY' },
+        { id: 'parallel', name: 'PARALLEL' },
+        { id: 'tavily', name: 'TAVILY' },
+        { id: 'brave', name: 'BRAVE' },
+    ];
 
-</body></html>
+    const state = {
+        isSearching: false,
+        providers: providers.map((provider) => ({
+            ...provider,
+            status: 'idle',
+            latencyMs: null,
+            resultCount: 0,
+            requestId: null,
+            nativeCost: null,
+            nativeUsage: null,
+            raw: null,
+            results: [],
+            error: null,
+        })),
+        lastRun: null,
+        error: null,
+    };
+
+    const queryInput = document.querySelector('#queryInput');
+    const maxResultsInput = document.querySelector('#maxResultsInput');
+    const searchButton = document.querySelector('#searchButton');
+    const buttonStatus = document.querySelector('#buttonStatus');
+    const resultsArea = document.querySelector('#resultsArea');
+    const runSummary = document.querySelector('#runSummary');
+
+    window.addEventListener('DOMContentLoaded', () => {
+        queryInput.focus();
+        queryInput.setSelectionRange(queryInput.value.length, queryInput.value.length);
+        render();
+    });
+
+    searchButton.addEventListener('click', runSearch);
+
+    queryInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
+            event.preventDefault();
+            runSearch();
+        }
+    });
+
+    async function runSearch() {
+        const query = queryInput.value.trim();
+        const maxResults = clampNumber(maxResultsInput.value, 1, 10, 5);
+
+        if (!query || state.isSearching) return;
+
+        state.isSearching = true;
+        state.error = null;
+        state.lastRun = null;
+        state.providers = providers.map((provider) => ({
+            ...provider,
+            status: 'loading',
+            latencyMs: null,
+            resultCount: 0,
+            requestId: null,
+            nativeCost: null,
+            nativeUsage: null,
+            raw: null,
+            results: [],
+            error: null,
+        }));
+        render();
+
+        try {
+            const response = await fetch('/api/search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query, maxResults }),
+            });
+            const payload = await response.json();
+
+            if (!response.ok) {
+                throw new Error(payload.error || 'Search failed');
+            }
+
+            state.providers = payload.providers;
+            state.lastRun = payload;
+        } catch (error) {
+            state.error = error.message || 'Search failed';
+            state.providers = providers.map((provider) => ({
+                ...provider,
+                status: 'error',
+                latencyMs: null,
+                resultCount: 0,
+                requestId: null,
+                nativeCost: null,
+                nativeUsage: null,
+                raw: null,
+                results: [],
+                error: { message: state.error },
+            }));
+        } finally {
+            state.isSearching = false;
+            render();
+        }
+    }
+
+    function render() {
+        searchButton.disabled = state.isSearching;
+        buttonStatus.textContent = state.isSearching ? 'RUNNING' : 'EXECUTE';
+        resultsArea.innerHTML = state.providers.map(renderProviderCard).join('');
+        renderSummary();
+    }
+
+    function renderSummary() {
+        if (state.error) {
+            runSummary.innerHTML = `<span>ERROR</span><span class="summary-muted">${escapeHtml(state.error)}</span>`;
+            return;
+        }
+
+        if (state.isSearching) {
+            runSummary.innerHTML = '<span>SEARCHING</span><span class="summary-muted">CALLING PROVIDERS IN PARALLEL</span>';
+            return;
+        }
+
+        if (!state.lastRun) {
+            runSummary.innerHTML = '<span>READY</span><span class="summary-muted">CMD/CTRL + ENTER TO RUN</span><span class="summary-muted">MISSING KEYS WILL BE SKIPPED</span>';
+            return;
+        }
+
+        const okCount = state.providers.filter((provider) => provider.status === 'ok').length;
+        const skippedCount = state.providers.filter((provider) => provider.status === 'skipped').length;
+        const errorCount = state.providers.filter((provider) => provider.status === 'error').length;
+
+        runSummary.innerHTML = [
+            `<span>QUERY: ${escapeHtml(state.lastRun.query)}</span>`,
+            `<span class="summary-muted">TOTAL: ${state.lastRun.totalLatencyMs}ms</span>`,
+            `<span class="summary-muted">OK: ${okCount}</span>`,
+            `<span class="summary-muted">SKIP: ${skippedCount}</span>`,
+            `<span class="summary-muted">ERR: ${errorCount}</span>`,
+        ].join('');
+    }
+
+    function renderProviderCard(provider) {
+        const statusClass = provider.status === 'error'
+            ? 'status-error'
+            : provider.status === 'skipped'
+                ? 'status-skipped'
+                : '';
+
+        return `
+            <article class="provider-card">
+                <div class="card-header">
+                    <div>
+                        <div class="provider-name mono">${escapeHtml(provider.name)}</div>
+                        <div class="status-line ${statusClass}">${escapeHtml(getStatusLabel(provider))}</div>
+                    </div>
+                    <div class="metrics">
+                        <div class="metric-item"><span class="metric-label">LAT:</span> ${formatLatency(provider.latencyMs)}</div>
+                        <div class="metric-item"><span class="metric-label">RES:</span> ${provider.resultCount ?? provider.results?.length ?? 0}</div>
+                        <div class="metric-item"><span class="metric-label">SIG:</span> ${escapeHtml(getSignals(provider))}</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    ${renderProviderBody(provider)}
+                </div>
+                <div class="card-footer">
+                    ${renderRawDetails(provider)}
+                </div>
+            </article>
+        `;
+    }
+
+    function renderProviderBody(provider) {
+        if (provider.status === 'loading') return renderSkeleton();
+
+        if (provider.status === 'idle') {
+            return '<div class="state-message">Awaiting search execution.</div>';
+        }
+
+        if (provider.status === 'skipped') {
+            return `<div class="state-message"><strong>Skipped</strong><br>${escapeHtml(provider.error?.message || 'Missing API key')}</div>`;
+        }
+
+        if (provider.status === 'error') {
+            const status = provider.error?.httpStatus ? `HTTP ${provider.error.httpStatus}` : 'REQUEST ERROR';
+            return `<div class="state-message status-error"><strong>${escapeHtml(status)}</strong><br>${escapeHtml(provider.error?.message || 'Provider failed')}</div>`;
+        }
+
+        if (!provider.results || provider.results.length === 0) {
+            return '<div class="state-message">No normalized results returned.</div>';
+        }
+
+        return provider.results.map(renderResult).join('');
+    }
+
+    function renderResult(result, index) {
+        const meta = [
+            result.publishedDate ? `PUB ${formatDate(result.publishedDate)}` : null,
+            result.updatedDate ? `UPD ${formatDate(result.updatedDate)}` : null,
+            typeof result.score === 'number' ? `SCORE ${formatScore(result.score)}` : null,
+            result.favicon ? 'FAVICON' : null,
+        ].filter(Boolean).join(' / ');
+
+        return `
+            <div class="result-snippet">
+                <a href="${escapeAttribute(result.url || '#')}" class="result-title" target="_blank" rel="noreferrer">${escapeHtml(result.title || `Result ${index + 1}`)}</a>
+                ${meta ? `<div class="result-meta">${escapeHtml(meta)}</div>` : ''}
+                <p class="result-text">${escapeHtml(truncate(result.snippet || 'No snippet supplied.', 420))}</p>
+            </div>
+        `;
+    }
+
+    function renderSkeleton() {
+        return Array.from({ length: 3 }, () => `
+            <div class="result-snippet" aria-hidden="true">
+                <div class="skeleton-line medium"></div>
+                <div class="skeleton-line"></div>
+                <div class="skeleton-line short"></div>
+            </div>
+        `).join('');
+    }
+
+    function renderRawDetails(provider) {
+        const raw = provider.raw || provider.error || { status: provider.status };
+        return `
+            <details class="raw-details">
+                <summary>VIEW RAW JSON</summary>
+                <pre class="raw-json">${escapeHtml(JSON.stringify(raw, null, 2))}</pre>
+            </details>
+        `;
+    }
+
+    function getStatusLabel(provider) {
+        switch (provider.status) {
+            case 'loading':
+                return 'Loading';
+            case 'ok':
+                return provider.requestId ? `OK / ${provider.requestId}` : 'OK';
+            case 'skipped':
+                return 'Skipped';
+            case 'error':
+                return 'Error';
+            default:
+                return 'Idle';
+        }
+    }
+
+    function getSignals(provider) {
+        if (provider.status === 'loading') return '...';
+        if (provider.status === 'skipped') return 'KEY';
+        if (provider.status === 'error') return 'ERR';
+
+        const hasDate = provider.results?.some((result) => result.publishedDate || result.updatedDate);
+        const hasScore = provider.results?.some((result) => typeof result.score === 'number');
+        const signals = [
+            hasDate ? 'DATE' : null,
+            hasScore ? 'SCORE' : null,
+            provider.nativeCost != null ? 'COST' : null,
+            provider.nativeUsage != null ? 'USAGE' : null,
+            provider.results?.some((result) => result.snippet) ? 'TEXT' : null,
+        ].filter(Boolean);
+
+        return signals.length ? signals.join('+') : '-';
+    }
+
+    function formatLatency(value) {
+        return typeof value === 'number' ? `${value}ms` : '-';
+    }
+
+    function formatScore(value) {
+        return value.toFixed(value > 1 ? 1 : 3);
+    }
+
+    function formatDate(value) {
+        return String(value).slice(0, 10);
+    }
+
+    function truncate(value, maxLength) {
+        const text = String(value || '').replace(/\s+/g, ' ').trim();
+        if (text.length <= maxLength) return text;
+        return `${text.slice(0, maxLength - 3)}...`;
+    }
+
+    function clampNumber(value, min, max, fallback) {
+        const number = Number.parseInt(value, 10);
+        if (Number.isNaN(number)) return fallback;
+        return Math.min(Math.max(number, min), max);
+    }
+
+    function escapeHtml(value) {
+        return String(value ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+    }
+
+    function escapeAttribute(value) {
+        return escapeHtml(value).replaceAll('`', '&#096;');
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "search-api-benchmark",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev",
+    "check": "node --check api/search.js"
+  },
+  "devDependencies": {
+    "vercel": "^48.6.0"
+  }
+}
