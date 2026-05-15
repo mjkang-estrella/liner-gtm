@@ -186,7 +186,7 @@ async function searchParallel({ apiKey, query, defaultResults }) {
       "x-api-key": apiKey,
     },
     body: JSON.stringify({
-      objective: `Find web search API products, documentation, pricing, and benchmark resources for AI agents and LLM applications. User query: ${query}.`,
+      objective: "",
       search_queries: deriveParallelQueries(query),
       advanced_settings: {
         max_results: defaultResults,
