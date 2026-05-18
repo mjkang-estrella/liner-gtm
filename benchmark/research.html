@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep Research Comparison</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/benchmark/styles.css">
+</head>
+<body>
+
+<div class="app-container research-app">
+    <section class="search-section research-search-section">
+        <div class="search-input-wrapper">
+            <div class="search-label mono">
+                <span>Deep Research Comparison</span>
+                <a class="page-link" href="/">Web Search</a>
+            </div>
+            <div class="search-input-row research-input-row" id="researchInputRow">
+                <textarea class="search-input research-input" id="queryInput" placeholder="Enter research question..." aria-label="Research query" autocomplete="off" autofocus>Assume I am the CEO of liner.com and anchor the following results based on our company's product.
+
+Research the current market for AI web search API products, including Web Search API, AI Search, and Deep research.
+
+I want:
+1. A market map by customer segment and use case
+2. Key differentiators by product
+3. Pricing and packaging comparison
+4. Developer experience comparison
+5. ICP for each company
+6. Which product is best positioned for agentic AI applications and why
+
+Do not just summarize company websites. Find real customer examples, docs, changelogs, announcements, GitHub discussions, and developer complaints where possible.</textarea>
+                <div class="input-expand-backdrop" id="inputExpandBackdrop" data-action="collapse-input" hidden></div>
+            </div>
+            <div class="tier-panel" aria-label="Provider tier selection">
+                <label class="tier-control">
+                    <span>Perplexity</span>
+                    <select id="perplexityTier">
+                        <option value="deep-research">deep-research</option>
+                        <option value="advanced-deep-research">advanced-deep-research</option>
+                    </select>
+                </label>
+                <label class="tier-control">
+                    <span>Parallel</span>
+                    <select id="parallelTier">
+                        <option value="pro-fast">pro-fast</option>
+                        <option value="ultra-fast">ultra-fast</option>
+                        <option value="pro">pro</option>
+                        <option value="ultra">ultra</option>
+                    </select>
+                </label>
+                <label class="tier-control">
+                    <span>Liner</span>
+                    <select id="linerTier">
+                        <option value="deep-research">deep-research</option>
+                        <option value="deep-research-pro">deep-research-pro</option>
+                    </select>
+                </label>
+            </div>
+        </div>
+        <button class="search-button" type="button" id="searchButton">
+            <div class="search-button-top mono" id="buttonStatus">EXECUTE</div>
+            <div class="search-button-main mono">RESEARCH<br>-&gt;</div>
+        </button>
+    </section>
+
+    <main class="results-area research-results-area" id="resultsArea" aria-live="polite"></main>
+</div>
+
+<div class="json-modal" id="jsonModal" hidden>
+    <div class="json-modal-backdrop" data-action="close-json"></div>
+    <section class="json-modal-panel" role="dialog" aria-modal="true" aria-labelledby="jsonModalTitle">
+        <div class="json-modal-header">
+            <div id="jsonModalTitle">RAW JSON</div>
+            <button class="json-modal-close" type="button" data-action="close-json" aria-label="Close raw JSON">X</button>
+        </div>
+        <pre class="raw-json" id="jsonModalBody"></pre>
+    </section>
+</div>
+
+<script src="/benchmark/research-app.js"></script>
+</body>
+</html>

@@ -1,17 +1,22 @@
 # API Result Comparison
 
-A Vercel-ready benchmark UI for comparing web search API results across Liner, Exa, Perplexity, Parallel, Tavily, and Brave.
+A Vercel-ready benchmark UI for comparing web search API results across Liner, Exa, Perplexity, Parallel, Tavily, and Brave. It also includes a separate deep research comparison page for Perplexity, Parallel, and Liner.
 
 The app keeps API keys server-side, calls providers through `/api/search`, normalizes provider-specific responses into one UI model, and shows raw JSON in an in-page modal for inspection.
 
 ## Project Structure
 
 ```text
-api/search.js                  Vercel API route wrapper
+api/search.js                  Web search API route wrapper
+api/deep-research.js           Deep research API route wrapper
 benchmark/search-api.js         Provider calls, normalization, cost estimates
+benchmark/deep-research-api.js  Deep research provider calls, streaming, normalization
 benchmark/index.html            Static page structure
+benchmark/research.html         Deep research page structure
 benchmark/styles.css            UI styles
 benchmark/app.js                Browser UI logic
+benchmark/research-app.js       Deep research browser UI logic
+benchmark/deep-research-api.test.js  Parser fixture checks
 benchmark/default-results.json  Default landing snapshot
 vercel.json                     Root rewrite to benchmark/index.html
 ```
@@ -42,6 +47,9 @@ Then open `http://localhost:3000` when using `vercel dev`.
 
 The current Codex local preview may also be served at `http://localhost:8000` by a lightweight local server.
 
+The deep research comparison page is available at `/benchmark/research.html`. It streams normalized updates from `/api/deep-research` and keeps provider-specific raw output available in each card's JSON modal.
+Deep research cards include a `CST` metric. Perplexity uses native usage cost when returned by the API; Parallel and Liner use their published fixed per-request tier pricing estimates.
+
 ## Check
 
 ```bash
@@ -61,6 +69,14 @@ To refresh the snapshot, run a local script that calls `benchmark/search-api.js`
 ```
 
 Do not commit `benchmark/.env` or print secret values while regenerating the snapshot.
+
+To refresh the deep research landing snapshot, run:
+
+```bash
+npm run snapshot:deep-research
+```
+
+This writes `benchmark/deep-research-default-results.json` using the default CEO-of-Liner market research prompt.
 
 ## Provider Defaults
 

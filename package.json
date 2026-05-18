@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "vercel dev",
-    "check": "node --check api/search.js && node --check benchmark/search-api.js && node --check benchmark/app.js"
+    "check": "node --check api/search.js && node --check api/deep-research.js && node --check benchmark/search-api.js && node --check benchmark/deep-research-api.js && node --check benchmark/app.js && node --check benchmark/research-app.js && node --check benchmark/save-deep-research-snapshot.js && node benchmark/deep-research-api.test.js",
+    "snapshot:deep-research": "node benchmark/save-deep-research-snapshot.js"
   },
   "devDependencies": {
-    "vercel": "^48.6.0"
+    "vercel": "^54.1.0"
   }
 }
